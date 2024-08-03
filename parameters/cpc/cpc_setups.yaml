@@ -1,8 +1,0 @@
-
-planningInit: "init/cpc_planning.yaml"
-lbfgsInit:     "init/cpc_lbfgs.yaml"
-
-planningRefine: "refine/cpc_planning.yaml"
-lbfgsRefine:     "refine/cpc_lbfgs.yaml"
-
-quadrotor: "cpc_quad.yaml"
