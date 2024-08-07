@@ -40,6 +40,10 @@ class Optimization():
         self._initialize_nlp_variables()
         self._ml_model = LinearRegression()
         self._train_ml_model()
+        
+        # Initialize the attributes here
+        self._lam_x0 = np.zeros(self._X_dim * self._Horizon + self._U_dim * self._Horizon + self._seg_num)
+        self._lam_g0 = np.zeros(len(self._nlp_g_dyn) * self._X_dim + len(self._nlp_g_wp_p))
 
     def _initialize_nlp_variables(self):
         self._nlp_x_x = []
@@ -155,6 +159,8 @@ class Optimization():
         if warm:
             features = np.concatenate((xinit, wp_p)).reshape(1, -1)
             self._xut0 = self._ml_model.predict(features)[0]
+        else:
+            self._xut0 = np.zeros(self._X_dim * self._Horizon + self._U_dim * self._Horizon + self._seg_num)
 
         res = self._opt_t_solver(
             x0=self._xut0,
@@ -171,3 +177,36 @@ class Optimization():
         self._lam_x0 = res["lam_x"]
         self._lam_g0 = res["lam_g"]
         return res
+
+# Function to compare optimization results
+def compare_optimizations(quad, wp_num, Ns, xinit, xend, wp_p):
+    opt = Optimization(quad, wp_num, Ns)
+
+    # Solve without warm start
+    result_without_warm = opt.solve_opt_t(xinit, xend, wp_p, warm=False)
+    print("Result without warm start:", result_without_warm)
+
+    # Solve with warm start
+    result_with_warm = opt.solve_opt_t(xinit, xend, wp_p, warm=True)
+    print("Result with warm start:", result_with_warm)
+
+    # Compare key metrics
+    # For demonstration, we print the optimized trajectories
+    print("Optimized trajectory without warm start:")
+    print(opt._xut0.reshape(-1, opt._X_dim))
+    
+    print("Optimized trajectory with warm start:")
+    print(opt._xut0.reshape(-1, opt._X_dim))
+
+    # Additional metrics such as convergence time, number of iterations, etc., can be added
+
+# Example usage
+# quad = Quadrotor()  # Initialize your quadrotor object here
+# wp_num = 5  # Number of waypoints
+# Ns = [10, 10, 10, 10, 10, 10]  # Number of segments
+# xinit = np.zeros(13)  # Initial state
+# xend = np.zeros(13)  # Final state
+# wp_p = np.random.rand(3 * wp_num)  # Random waypoints
+
+# compare_optimizations(quad, wp_num, Ns, xinit, xend, wp_p)
+
