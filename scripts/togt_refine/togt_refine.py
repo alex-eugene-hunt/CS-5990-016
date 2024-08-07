@@ -1,7 +1,7 @@
 import numpy as np
 import casadi as ca
-
 import sys, os
+
 BASEPATH = os.path.abspath(__file__).split("togt_refine/", 1)[0]+"togt_refine/"
 ROOTPATH = os.path.abspath(__file__).split("togt_refine/", 1)[0]+".."
 sys.path += [BASEPATH]
@@ -11,6 +11,7 @@ from optimization import Optimization
 from quadrotor import Quadrotor
 from trajectory import Trajectory
 import csv
+
 def save_traj(res, opt: Optimization, csv_f):
     with open(csv_f, 'w') as f:
         traj_writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -68,7 +69,7 @@ def refine(quad, planner, tol, tol_term, desired_dt):
 
     print("\n\nTime optimization start ......\n")
     wp_opt.define_opt_t()
-    res_t = wp_opt.solve_opt_t(togt._xinit, togt._xend, np.array(togt._waypoints).flatten())
+    res_t = wp_opt.solve_opt_t(togt._xinit, togt._xend, np.array(togt._waypoints).flatten(), warm=True)
 
     save_traj(res_t, wp_opt, ROOTPATH+"/resources/trajectory/"+planner+"_refined_traj.csv")
 
