@@ -19,7 +19,7 @@ def load_data(file_pattern):
 
 # Train a supervised learning model
 def train_model(features, labels):
-    X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.9, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=42)
     model = RandomForestRegressor(n_estimators=100, random_state=42)
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
@@ -41,7 +41,7 @@ def predict_and_save(model, file_pattern, output_csv, expected_features):
     # Ensure the new data contains only the expected features
     new_data = new_data[expected_features]
     predictions = model.predict(new_data)
-    predictions_df = pd.DataFrame(predictions, columns=['p_x', 'p_y', 'p_z'])
+    predictions_df = pd.DataFrame(predictions, columns=['u_1', 'u_2', 'u_3', 'u_4'])
     result_df = pd.concat([new_data, predictions_df], axis=1)
     result_df.to_csv(output_csv, index=False)
 
@@ -50,9 +50,9 @@ if __name__ == "__main__":
     train_file_pattern = '../../resources/trajectory/*.csv'  # Replace with the actual path pattern to your training CSV files
     combined_data = load_data(train_file_pattern)
     
-    # Assuming 'p_x', 'p_y', 'p_z' are the labels
-    label_columns = ['p_x', 'p_y', 'p_z']
-    # Assuming the state features include control inputs and other relevant columns
+    # Assuming the control inputs 'u_1', 'u_2', 'u_3', 'u_4' are the labels
+    label_columns = ['u_1', 'u_2', 'u_3', 'u_4']
+    # Assuming the state features are all columns except the labels
     feature_columns = [col for col in combined_data.columns if col not in label_columns]
     
     features = combined_data[feature_columns]
