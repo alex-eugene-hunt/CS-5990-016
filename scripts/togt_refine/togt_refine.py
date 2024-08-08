@@ -59,6 +59,7 @@ def save_traj(res, opt: Optimization, csv_f):
 def refine(quad, planner, tol, tol_term, desired_dt):
     quad = Quadrotor(ROOTPATH+'/parameters/'+quad+'/'+quad+'_quad.yaml')
     togt = Trajectory(desired_dt, ROOTPATH+"/resources/trajectory/"+planner+"_traj.csv", ROOTPATH+"/resources/trajectory/"+planner+"_wpt.yaml")
+    #togt = Trajectory(desired_dt, ROOTPATH+"/resources/predict/predict_here.csv", ROOTPATH+"/resources/trajectory/"+planner+"_wpt.yaml")
     togt.print()
 
     wp_opt = Optimization(quad, togt._wpt_num, togt._Ns, tol, tol_term)
@@ -71,6 +72,7 @@ def refine(quad, planner, tol, tol_term, desired_dt):
     res_t = wp_opt.solve_opt_t(togt._xinit, togt._xend, np.array(togt._waypoints).flatten())
 
     save_traj(res_t, wp_opt, ROOTPATH+"/resources/trajectory/"+planner+"_refined_traj.csv")
+    #save_traj(res_t, wp_opt, ROOTPATH+"/resources/trajectory/predict_refined_traj.csv")
 
 if __name__ == "__main__":
     quad = 'cpc'
